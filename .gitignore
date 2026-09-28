@@ -1,0 +1,23 @@
+# Secrets
+key.txt
+
+# Build & Runtime
+backend/target/
+backend/build/
+backend/out/
+backend/*.jar
+backend/*.war
+backend/*.log
+backend/hs_err_pid*
+backend/data/
+backend/.mvn/wrapper/maven-wrapper.jar
+.m2/
+
+# IDE IntelliJ IDEA
+backend/.idea/
+backend/*.iml
+
+# IDE VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/tasks.json

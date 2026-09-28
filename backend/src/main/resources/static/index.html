@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ticket Management System • Created by Simran</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path>
+            <path d="M13 5v2"></path>
+            <path d="M13 17v2"></path>
+            <path d="M13 11v2"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">TicketPulse</span>
+          <span class="brand-badge">v1.0</span>
+        </div>
+      </div>
+
+      <div class="nav-center">
+        <!-- Prominent Created by Simran Badge -->
+        <div class="creator-pill" id="creatorBadge">
+          <span class="pulse-indicator"></span>
+          <span class="creator-text">Created by <strong class="creator-name">Simran</strong></span>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <a href="/swagger-ui.html" target="_blank" class="btn-ghost" title="Open Swagger UI API Docs">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span>API Docs</span>
+        </a>
+        <button id="btnNewTicketNav" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>New Ticket</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    <!-- Hero / Welcome Banner -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="hero-badge-tag">NEW SYSTEM</span>
+          <span>Designed & Built by <strong>Simran</strong></span>
+        </div>
+        <h1 class="hero-title">Ticket Lifecycle & Issue Hub</h1>
+        <p class="hero-subtitle">
+          Streamline issue tracking, manage state transitions, and collaborate with real-time discussions across your team.
+        </p>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card" id="statTotal">
+          <div class="stat-value" id="valTotal">—</div>
+          <div class="stat-label">Total Tickets</div>
+        </div>
+        <div class="stat-card open" id="statOpen">
+          <div class="stat-value" id="valOpen">—</div>
+          <div class="stat-label">Open</div>
+        </div>
+        <div class="stat-card in-progress" id="statProgress">
+          <div class="stat-value" id="valProgress">—</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card resolved" id="statResolved">
+          <div class="stat-value" id="valResolved">—</div>
+          <div class="stat-label">Resolved</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toolbar / Filters -->
+    <section class="toolbar-section">
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search by title or description..." autocomplete="off">
+        <button id="clearSearchBtn" class="clear-btn" style="display: none;">&times;</button>
+      </div>
+
+      <div class="filter-group">
+        <label for="statusFilter" class="filter-label">Status:</label>
+        <select id="statusFilter" class="select-input">
+          <option value="">All Statuses</option>
+          <option value="OPEN">Open</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="RESOLVED">Resolved</option>
+          <option value="CLOSED">Closed</option>
+          <option value="CANCELLED">Cancelled</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="pageSizeSelect" class="filter-label">Per Page:</label>
+        <select id="pageSizeSelect" class="select-input">
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+          <option value="50">50</option>
+        </select>
+      </div>
+
+      <div class="toolbar-actions">
+        <button id="btnRefresh" class="btn-secondary" title="Refresh Tickets">
+          <svg class="spin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span>Refresh</span>
+        </button>
+        <button id="btnQuickSeed" class="btn-secondary" title="Seed Demo Data if Empty">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          <span>Demo Data</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Tickets Grid / List View -->
+    <section class="tickets-section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>Tickets</span>
+          <span id="ticketCountBadge" class="count-badge">0</span>
+        </h2>
+        <div class="status-legend">
+          <span class="legend-item"><span class="dot dot-open"></span> Open</span>
+          <span class="legend-item"><span class="dot dot-progress"></span> In Progress</span>
+          <span class="legend-item"><span class="dot dot-resolved"></span> Resolved</span>
+          <span class="legend-item"><span class="dot dot-closed"></span> Closed</span>
+          <span class="legend-item"><span class="dot dot-cancelled"></span> Cancelled</span>
+        </div>
+      </div>
+
+      <!-- Ticket Cards Grid -->
+      <div id="ticketsGrid" class="tickets-grid">
+        <!-- Rendered via app.js -->
+      </div>
+
+      <!-- Loading State -->
+      <div id="loadingState" class="state-container" style="display: none;">
+        <div class="loader"></div>
+        <p>Loading tickets from server...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="state-container" style="display: none;">
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+            <path d="M7 15h0M2 9.5h20"></path>
+          </svg>
+        </div>
+        <h3 id="emptyTitle">No tickets found</h3>
+        <p id="emptyDesc">Get started by creating your first ticket or clearing search filters.</p>
+        <button id="btnEmptyCreate" class="btn-primary" style="margin-top: 1rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Create New Ticket
+        </button>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-bar" id="paginationBar" style="display: none;">
+        <div class="pagination-info" id="paginationInfo">
+          Showing 1 to 10 of 10 tickets
+        </div>
+        <div class="pagination-controls">
+          <button id="btnPrevPage" class="btn-page" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+            Previous
+          </button>
+          <span class="page-current" id="pageIndicator">Page 1 of 1</span>
+          <button id="btnNextPage" class="btn-page" disabled>
+            Next
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Create Ticket Modal -->
+  <div class="modal-overlay" id="createModal" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Create New Ticket</h3>
+          <p class="modal-subtitle">Submit a new issue into the tracking lifecycle.</p>
+        </div>
+        <button class="modal-close" id="closeCreateModalBtn">&times;</button>
+      </div>
+      <form id="createTicketForm" class="modal-body">
+        <div class="form-group">
+          <div class="form-label-row">
+            <label for="createTitle">Title <span class="required">*</span></label>
+            <span class="char-count" id="createTitleCount">0/150</span>
+          </div>
+          <input type="text" id="createTitle" class="form-input" placeholder="Enter ticket title (5-150 characters)..." required minlength="5" maxlength="150">
+          <div class="field-hint">Must be between 5 and 150 characters long.</div>
+        </div>
+
+        <div class="form-group">
+          <label for="createAssignee">Assignee ID (Optional)</label>
+          <input type="text" id="createAssignee" class="form-input" placeholder="e.g. simran, eng-lead, agent-42">
+        </div>
+
+        <div class="form-group">
+          <label for="createDescription">Description <span class="required">*</span></label>
+          <textarea id="createDescription" class="form-textarea" rows="5" placeholder="Detailed explanation of the issue, repro steps, or business requirement..." required></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" id="cancelCreateBtn">Cancel</button>
+          <button type="submit" class="btn-primary" id="submitCreateBtn">
+            <span>Create Ticket</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Ticket Detail & Discussion Drawer / Modal -->
+  <div class="modal-overlay" id="detailModal" style="display: none;">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <div class="ticket-header-meta">
+          <span class="ticket-id-tag" id="detailId">#—</span>
+          <span class="status-badge" id="detailStatusBadge">OPEN</span>
+        </div>
+        <div class="modal-header-actions">
+          <button id="btnToggleEdit" class="btn-ghost btn-sm" title="Edit Ticket Details">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+            <span id="btnEditLabel">Edit</span>
+          </button>
+          <button class="modal-close" id="closeDetailModalBtn">&times;</button>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <!-- View Mode -->
+        <div id="detailViewMode">
+          <h2 class="detail-title" id="detailTitle">—</h2>
+          
+          <div class="meta-strip">
+            <div class="meta-item">
+              <span class="meta-label">Assignee</span>
+              <span class="meta-val" id="detailAssignee">Unassigned</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Created At</span>
+              <span class="meta-val" id="detailCreatedAt">—</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Last Updated</span>
+              <span class="meta-val" id="detailUpdatedAt">—</span>
+            </div>
+          </div>
+
+          <!-- Lifecycle Transitions Section -->
+          <div class="lifecycle-box">
+            <div class="lifecycle-header">
+              <span class="lifecycle-title">Lifecycle State Actions</span>
+              <span class="lifecycle-rule" id="lifecycleRuleText">Allowed transitions:</span>
+            </div>
+            <div class="transition-buttons" id="transitionActions">
+              <!-- Dynamically populated based on state machine -->
+            </div>
+          </div>
+
+          <div class="description-box">
+            <h4 class="description-heading">Description</h4>
+            <div class="description-text" id="detailDescription">—</div>
+          </div>
+        </div>
+
+        <!-- Edit Mode -->
+        <form id="editTicketForm" style="display: none;" class="edit-form">
+          <div class="form-group">
+            <div class="form-label-row">
+              <label for="editTitle">Edit Title <span class="required">*</span></label>
+              <span class="char-count" id="editTitleCount">0/150</span>
+            </div>
+            <input type="text" id="editTitle" class="form-input" required minlength="5" maxlength="150">
+          </div>
+          <div class="form-group">
+            <label for="editAssignee">Edit Assignee ID</label>
+            <input type="text" id="editAssignee" class="form-input">
+          </div>
+          <div class="form-group">
+            <label for="editDescription">Edit Description <span class="required">*</span></label>
+            <textarea id="editDescription" class="form-textarea" rows="5" required></textarea>
+          </div>
+          <div class="edit-actions">
+            <button type="button" class="btn-ghost" id="cancelEditBtn">Cancel</button>
+            <button type="submit" class="btn-primary" id="saveEditBtn">Save Changes</button>
+          </div>
+        </form>
+
+        <hr class="divider">
+
+        <!-- Comments & Discussion Section -->
+        <section class="comments-section">
+          <div class="comments-header">
+            <div class="comments-heading-group">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <h3>Discussion</h3>
+              <span id="commentCountBadge" class="comment-count-badge">0</span>
+            </div>
+          </div>
+
+          <!-- Add Comment Form -->
+          <form id="addCommentForm" class="comment-input-card">
+            <div class="comment-form-row">
+              <input type="text" id="commentAuthor" class="form-input form-input-sm" placeholder="Your name / ID (e.g. Simran)">
+            </div>
+            <div class="comment-form-row">
+              <textarea id="commentContent" class="form-textarea" rows="3" placeholder="Write a comment or update (1 - 1000 characters)..." required maxlength="1000"></textarea>
+            </div>
+            <div class="comment-submit-row">
+              <span class="char-count" id="commentCharCount">0/1000</span>
+              <button type="submit" class="btn-primary btn-sm" id="btnSubmitComment">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                Post Comment
+              </button>
+            </div>
+          </form>
+
+          <!-- Comments List -->
+          <div id="commentsList" class="comments-list">
+            <!-- Populated via app.js -->
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <span class="footer-brand">TicketPulse TMS</span>
+        <span class="footer-dot">•</span>
+        <span class="footer-creator">Designed & Developed by <strong>Simran</strong></span>
+      </div>
+      <div class="footer-right">
+        <span class="footer-label">Project: Ticket Management System</span>
+        <span class="footer-dot">•</span>
+        <a href="/swagger-ui.html" target="_blank" class="footer-link">Swagger UI</a>
+        <span class="footer-dot">•</span>
+        <a href="/api/v1/openapi.json" target="_blank" class="footer-link">OpenAPI Spec</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
